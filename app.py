@@ -77,6 +77,52 @@ model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 
 accuracy = accuracy_score(y_test, model.predict(X_test))
+ # ---------- ANALYTICS DASHBOARD ----------
+st.markdown("---")
+st.subheader("📊 Agricultural Data Analytics Dashboard")
+
+d1, d2, d3, d4 = st.columns(4)
+
+with d1:
+    st.metric("Total Records", len(data))
+
+with d2:
+    st.metric("Crop Types", data["label"].nunique())
+
+with d3:
+    st.metric("Avg Rainfall", round(data["rainfall"].mean(), 2))
+
+with d4:
+    st.metric("Avg Temperature", round(data["temperature"].mean(), 2))
+
+st.write("### 🌾 Crop Distribution")
+crop_count = data["label"].value_counts()
+st.bar_chart(crop_count)
+
+st.write("### 🌧️ Average Rainfall Requirement by Crop")
+rainfall_crop = data.groupby("label")["rainfall"].mean().sort_values(ascending=False)
+st.bar_chart(rainfall_crop)
+
+st.write("### 🌡️ Average Temperature Requirement by Crop")
+temperature_crop = data.groupby("label")["temperature"].mean().sort_values(ascending=False)
+st.bar_chart(temperature_crop)
+
+st.write("### 🧪 Average Soil pH by Crop")
+ph_crop = data.groupby("label")["ph"].mean().sort_values(ascending=False)
+st.bar_chart(ph_crop)
+
+st.write("### 💡 Data Insights")
+
+highest_rain_crop = rainfall_crop.idxmax()
+highest_temp_crop = temperature_crop.idxmax()
+
+st.info(
+    f"🌧️ {highest_rain_crop.capitalize()} requires highest average rainfall."
+)
+
+st.success(
+    f"🌡️ {highest_temp_crop.capitalize()} grows in highest temperature conditions."
+)
 
 # ---------- HEADER ----------
 st.markdown("<div class='big-title'>🌱 AgriVision AI</div>", unsafe_allow_html=True)
